@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/alpineworks/firewx/compare/v1.0.1...v1.1.0) (2026-08-02)
+
+
+### Features
+
+* **fwi:** implement the Canadian Forest Fire Weather Index System ([6d9eb73](https://github.com/alpineworks/firewx/commit/6d9eb7389b4c7853bf9636931f49386fafda5dad))
+* **fwi:** implement the Canadian Forest Fire Weather Index System ([d3bc5df](https://github.com/alpineworks/firewx/commit/d3bc5df9f528bb2652f90984b29ca3e8bb575ec9))
+
+
+### Documentation
+
+* add runnable examples for firewx, simple, and fwi ([f73eb42](https://github.com/alpineworks/firewx/commit/f73eb42cb633e450847f8e65d71b5960b48f8232))
+
 ## [1.0.1](https://github.com/alpineworks/firewx/compare/v1.0.0...v1.0.1) (2026-08-02)
 
 
