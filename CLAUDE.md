@@ -106,6 +106,9 @@ genuinely import the root.
 - One test file per source file. Put the tests for `units.go` in `units_test.go`
   and the tests for `obs.go` in `obs_test.go`. Put shared test helpers, such as
   `closeTo`, in `helpers_test.go`.
+- Write table-driven tests. Use a slice of named cases and a loop with `t.Run`
+  for each case. Use a different form only when you cannot write the test as a
+  table (for example a single sequence of stateful steps).
 - Verify both ways before claiming a change works:
   ```sh
   go test ./...                                        # workspace

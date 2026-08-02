@@ -1,29 +1,50 @@
 package simple
 
 import (
+	"fmt"
 	"testing"
 
 	firewx "alpineworks.io/firewx"
 )
 
-func TestChandlerGolden(t *testing.T) {
-	// T=25C, RH=40%. Identical to firebehavioR::fireIndex(temp=25, rh=40)$chandler
-	// = (((110-1.373*40)-0.54*(10.20-25))*(124*10^(-0.0142*40)))/60 = 35.25.
-	got := ChandlerIndex(25, 40)
-	closeTo(t, float64(got), 35.25, 0.05, "CBI(25C,40%)")
+func TestChandlerValues(t *testing.T) {
+	cases := []struct {
+		name string
+		t    firewx.Celsius
+		rh   firewx.Percent
+		want float64
+		tol  float64
+	}{
+		// Identical to firebehavioR::fireIndex(temp=25, rh=40)$chandler
+		// = (((110-1.373*40)-0.54*(10.20-25))*(124*10^(-0.0142*40)))/60.
+		{"golden 25C/40%", 25, 40, 35.25, 0.05},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			closeTo(t, float64(ChandlerIndex(tc.t, tc.rh)), tc.want, tc.tol, tc.name)
+		})
+	}
 }
 
 func TestChandlerMonotonic(t *testing.T) {
-	if ChandlerIndex(25, 15) <= ChandlerIndex(25, 60) {
-		t.Error("CBI should rise as RH falls")
+	cases := []struct {
+		name   string
+		hi, lo Chandler
+	}{
+		{"rises as RH falls", ChandlerIndex(25, 15), ChandlerIndex(25, 60)},
+		// The temperature term -0.54*(10.20-T) must raise CBI as temperature rises.
+		{"rises as temperature rises", ChandlerIndex(35, 40), ChandlerIndex(15, 40)},
 	}
-	// The temperature term -0.54*(10.20-T) must raise CBI as temperature rises.
-	if ChandlerIndex(35, 40) <= ChandlerIndex(15, 40) {
-		t.Error("CBI should rise as temperature rises")
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.hi <= tc.lo {
+				t.Errorf("%s: got hi=%v, lo=%v", tc.name, tc.hi, tc.lo)
+			}
+		})
 	}
 }
 
-func TestChandlerClassBoundaries(t *testing.T) {
+func TestChandlerClass(t *testing.T) {
 	cases := []struct {
 		v    Chandler
 		want DangerClass
@@ -32,22 +53,44 @@ func TestChandlerClassBoundaries(t *testing.T) {
 		{75, ClassHigh}, {89, ClassHigh}, {90, ClassVeryHigh},
 		{97.4, ClassVeryHigh}, {97.5, ClassExtreme},
 	}
-	for _, c := range cases {
-		if got := c.v.Class(); got != c.want {
-			t.Errorf("Chandler(%v).Class()=%v, want %v", c.v, got, c.want)
-		}
+	for _, tc := range cases {
+		t.Run(fmt.Sprintf("CBI=%v", tc.v), func(t *testing.T) {
+			if got := tc.v.Class(); got != tc.want {
+				t.Errorf("Chandler(%v).Class()=%v, want %v", tc.v, got, tc.want)
+			}
+		})
 	}
 }
 
 func TestChandlerFromObs(t *testing.T) {
-	o := firewx.Obs{Temperature: firewx.Some(firewx.Celsius(25))}
-	if ChandlerFromObs(o).Valid() {
-		t.Error("Chandler should be absent without RH")
+	cases := []struct {
+		name      string
+		obs       firewx.Obs
+		wantValid bool
+		want, tol float64
+	}{
+		{
+			name:      "absent without RH",
+			obs:       firewx.Obs{Temperature: firewx.Some(firewx.Celsius(25))},
+			wantValid: false,
+		},
+		{
+			name:      "present with T and RH",
+			obs:       firewx.Obs{Temperature: firewx.Some(firewx.Celsius(25)), RelativeHumidity: firewx.Some(firewx.Percent(40))},
+			wantValid: true,
+			want:      float64(ChandlerIndex(25, 40)),
+			tol:       1e-9,
+		},
 	}
-	o.RelativeHumidity = firewx.Some(firewx.Percent(40))
-	got, ok := ChandlerFromObs(o).Get()
-	if !ok {
-		t.Fatal("Chandler should be present with T and RH")
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := ChandlerFromObs(tc.obs)
+			if got.Valid() != tc.wantValid {
+				t.Fatalf("%s: Valid()=%v, want %v", tc.name, got.Valid(), tc.wantValid)
+			}
+			if tc.wantValid {
+				closeTo(t, float64(got.Must()), tc.want, tc.tol, tc.name)
+			}
+		})
 	}
-	closeTo(t, float64(got), float64(ChandlerIndex(25, 40)), 1e-9, "ChandlerFromObs value")
 }

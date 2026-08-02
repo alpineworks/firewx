@@ -2,50 +2,84 @@ package simple
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	firewx "alpineworks.io/firewx"
 )
 
-func TestKBDIIncrementGolden(t *testing.T) {
-	// From a saturated soil (Q=0), one day at 90F with 50 in mean annual
-	// rainfall raises the index by about 24.92 hundredths of an inch. Recomputed
-	// from the corrected Keetch-Byram (1968) equation.
-	s := NewKBDIState(50)
-	s.Step(90, 0)
-	closeTo(t, float64(s.Index), 24.92, 0.05, "KBDI increment from 0")
+func TestKBDIIncrement(t *testing.T) {
+	cases := []struct {
+		name           string
+		q              KBDI
+		maxT           firewx.Fahrenheit
+		meanAnnualRain firewx.Inches
+		want           float64
+		tol            float64
+	}{
+		// From a saturated soil (Q=0), 90F with 50 in mean annual rainfall raises
+		// the index by about 24.92 hundredths of an inch. Recomputed from the
+		// corrected Keetch-Byram (1968) equation.
+		{"saturated soil, 90F, 50in", 0, 90, 50, 24.92, 0.05},
+		// A cool day floors the evapotranspiration term at zero: no drought added.
+		{"cool day adds nothing", 400, 40, 50, 0, 1e-9},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			closeTo(t, float64(KBDIIncrement(tc.q, tc.maxT, tc.meanAnnualRain)), tc.want, tc.tol, tc.name)
+		})
+	}
 }
 
 func TestKBDIRainInterceptionOncePerSpell(t *testing.T) {
 	// 40F clamps the evapotranspiration term to zero, isolating the rain
 	// bookkeeping: the 0.20 in interception is charged once per wet spell.
+	steps := []struct {
+		name string
+		rain firewx.Inches
+		want float64
+	}{
+		{"first wet day, net 0.30", 0.5, 370},
+		{"second wet day, interception spent, net 0.50", 0.5, 320},
+		{"dry cool day ends the spell", 0, 320},
+		{"sub-threshold rain wets nothing", 0.1, 320},
+	}
 	s := NewKBDIState(50)
 	s.Index = 400
-
-	s.Step(40, 0.5) // net 0.30 -> -30
-	closeTo(t, float64(s.Index), 370, 1e-9, "KBDI after first wet day")
-	s.Step(40, 0.5) // consecutive: interception already spent, net 0.50 -> -50
-	closeTo(t, float64(s.Index), 320, 1e-9, "KBDI after second wet day")
-	s.Step(40, 0) // dry day ends the spell, no drought added
-	closeTo(t, float64(s.Index), 320, 1e-9, "KBDI unchanged on dry cool day")
-	s.Step(40, 0.1) // sub-threshold rain wets nothing
-	closeTo(t, float64(s.Index), 320, 1e-9, "KBDI unchanged on sub-threshold rain")
+	for _, st := range steps {
+		s.Step(40, st.rain)
+		t.Run(st.name, func(t *testing.T) {
+			closeTo(t, float64(s.Index), st.want, 1e-9, st.name)
+		})
+	}
 }
 
-func TestKBDIStaysInRange(t *testing.T) {
-	// Heavy rain floors at zero.
+func TestKBDIBounds(t *testing.T) {
+	cases := []struct {
+		name  string
+		start KBDI
+		maxT  firewx.Fahrenheit
+		rain  firewx.Inches
+		want  float64
+	}{
+		{"heavy rain floors at zero", 100, 40, 2.0, 0},     // net 1.8 -> -180
+		{"holds at the 800 ceiling", KBDIMax, 110, 0, 800}, // (800-Q) factor is zero
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			s := NewKBDIState(50)
+			s.Index = tc.start
+			s.Step(tc.maxT, tc.rain)
+			closeTo(t, float64(s.Index), tc.want, 1e-9, tc.name)
+		})
+	}
+}
+
+func TestKBDIApproachesCeiling(t *testing.T) {
+	// Sustained heat drives the index up toward, but never past, 800. The
+	// (800-Q) factor shrinks the daily rise, so the approach is asymptotic and
+	// cannot be expressed as a fixed table of expected values.
 	s := NewKBDIState(50)
-	s.Index = 100
-	s.Step(40, 2.0) // net 1.8 -> -180, floored at 0
-	closeTo(t, float64(s.Index), 0, 1e-9, "KBDI floored at zero")
-
-	// At the ceiling the (800-Q) factor is zero, so a hot day adds nothing and
-	// the index holds at 800. This exercises the upper bound directly.
-	s.Index = KBDIMax
-	s.Step(110, 0)
-	closeTo(t, float64(s.Index), float64(KBDIMax), 1e-9, "KBDI holds at 800")
-
-	// Sustained heat drives the index up toward, but never past, 800.
 	s.Index = 790
 	for range 60 {
 		s.Step(110, 0)
@@ -58,7 +92,7 @@ func TestKBDIStaysInRange(t *testing.T) {
 	}
 }
 
-func TestKBDIClassBoundaries(t *testing.T) {
+func TestKBDIClass(t *testing.T) {
 	cases := []struct {
 		v    KBDI
 		want DangerClass
@@ -66,55 +100,81 @@ func TestKBDIClassBoundaries(t *testing.T) {
 		{199, ClassLow}, {200, ClassModerate}, {399, ClassModerate},
 		{400, ClassHigh}, {599, ClassHigh}, {600, ClassExtreme}, {800, ClassExtreme},
 	}
-	for _, c := range cases {
-		if got := c.v.Class(); got != c.want {
-			t.Errorf("KBDI(%v).Class()=%v, want %v", c.v, got, c.want)
-		}
+	for _, tc := range cases {
+		t.Run(fmt.Sprintf("Q=%v", tc.v), func(t *testing.T) {
+			if got := tc.v.Class(); got != tc.want {
+				t.Errorf("KBDI(%v).Class()=%v, want %v", tc.v, got, tc.want)
+			}
+		})
 	}
 }
 
 func TestKBDIStepObs(t *testing.T) {
-	// Success path: 90F, no rain, from a saturated soil.
-	s := NewKBDIState(50)
-	o := firewx.Obs{
-		Temperature:   firewx.Some(firewx.Celsius(32.2222)), // 90F
-		Precipitation: firewx.Some(firewx.Millimeters(0)),
+	// KBDI uses the daily maximum temperature. An absent temperature or
+	// precipitation must leave the state untouched.
+	cases := []struct {
+		name        string
+		obs         firewx.Obs
+		start       KBDI
+		wantApplied bool
+		want, tol   float64
+	}{
+		{
+			name:        "applies with temperature and precip",
+			obs:         firewx.Obs{Temperature: firewx.Some(firewx.Celsius(32.2222)), Precipitation: firewx.Some(firewx.Millimeters(0))}, // 90F
+			start:       0,
+			wantApplied: true,
+			want:        24.92,
+			tol:         0.05,
+		},
+		{
+			name:        "skips without precipitation",
+			obs:         firewx.Obs{Temperature: firewx.Some(firewx.Celsius(30))},
+			start:       300,
+			wantApplied: false,
+		},
 	}
-	if !s.StepObs(o) {
-		t.Fatal("StepObs should apply with temperature and precip present")
-	}
-	closeTo(t, float64(s.Index), 24.92, 0.05, "KBDI StepObs increment")
-
-	// Absent rain must not advance the state.
-	s2 := NewKBDIState(50)
-	s2.Index = 300
-	if s2.StepObs(firewx.Obs{Temperature: firewx.Some(firewx.Celsius(30))}) {
-		t.Error("StepObs should report false without precipitation")
-	}
-	if s2.Index != 300 {
-		t.Error("state must be untouched when precipitation is absent")
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			s := NewKBDIState(50)
+			s.Index = tc.start
+			applied := s.StepObs(tc.obs)
+			if applied != tc.wantApplied {
+				t.Fatalf("%s: applied=%v, want %v", tc.name, applied, tc.wantApplied)
+			}
+			if tc.wantApplied {
+				closeTo(t, float64(s.Index), tc.want, tc.tol, tc.name)
+			} else if s.Index != tc.start {
+				t.Errorf("%s: state must be untouched, got %v", tc.name, s.Index)
+			}
+		})
 	}
 }
 
 func TestKBDIStateJSONRoundTrip(t *testing.T) {
 	// Property: any state value survives a JSON round trip byte for byte, which
 	// the driver relies on for persistence between daily runs.
-	states := []KBDIState{
-		NewKBDIState(50),
-		{SchemaVersion: schemaVersion, Index: 412.5, MeanAnnualRain: 33.75, WetSpellRain: 0.15},
-		{SchemaVersion: schemaVersion, Index: 800, MeanAnnualRain: 60.125, WetSpellRain: 1.2},
+	cases := []struct {
+		name  string
+		state KBDIState
+	}{
+		{"zero value", NewKBDIState(50)},
+		{"mid range with wet spell", KBDIState{SchemaVersion: schemaVersion, Index: 412.5, MeanAnnualRain: 33.75, WetSpellRain: 0.15}},
+		{"at the ceiling", KBDIState{SchemaVersion: schemaVersion, Index: 800, MeanAnnualRain: 60.125, WetSpellRain: 1.2}},
 	}
-	for _, k := range states {
-		var back KBDIState
-		b, err := json.Marshal(k)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if err := json.Unmarshal(b, &back); err != nil {
-			t.Fatal(err)
-		}
-		if back != k {
-			t.Errorf("KBDIState round trip: got %+v, want %+v", back, k)
-		}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			b, err := json.Marshal(tc.state)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var back KBDIState
+			if err := json.Unmarshal(b, &back); err != nil {
+				t.Fatal(err)
+			}
+			if back != tc.state {
+				t.Errorf("round trip: got %+v, want %+v", back, tc.state)
+			}
+		})
 	}
 }
