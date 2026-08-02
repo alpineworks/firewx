@@ -1,0 +1,5 @@
+"StationName","DateTime","ObservationType","Temperature(F)","RelativeHumidity(%)","Precipitation(in)","WindSpeed(mph)","WindAzimuth(degrees)","GustSpeed(mph)","GustAzimuth(degrees)","SnowFlag","SolarRadiation(W/m2)","Tflag","RHflag","PCPflag","WSflag","WAflag","SRflag","GSflag","GAflag","StationId","VPD(Pa)"
+"GREENBASE","2026-07-25T00:00:00Z","O",87,25,0,9,270,19,281,0,555,,,,,,,,,20284,3285
+"GREENBASE","2026-07-25T01:00:00Z","O",86,28,0,7,245,16,253,0,303,,,,,,,,,20284,3055
+"GREENBASE","2026-07-25T02:00:00Z","O",80,41,0,4,273,10,271,0,95,,,,,,,,,20284,2063
+"GREENBASE","2026-07-25T03:00:00Z","O",,,0,3,270,8,265,0,50,,,,,,,,,20284,

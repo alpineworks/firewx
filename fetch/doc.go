@@ -3,8 +3,8 @@
 // The clients live in subpackages, one per source:
 //
 //   - synoptic: raw RAWS observations from the Synoptic Weather API.
-//   - fems: RAWS observations, station metadata, and computed NFDRS output from
-//     the Fire Environment Mapping System. Not implemented yet.
+//   - fems: RAWS observations and computed NFDRS output from the Fire
+//     Environment Mapping System.
 //   - wrcc: the RAWS station inventory from the Western Regional Climate Center.
 //     Not implemented yet.
 //
