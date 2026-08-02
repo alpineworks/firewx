@@ -44,6 +44,36 @@ func TestStepGoldenDay1(t *testing.T) {
 	}
 }
 
+func TestStepGoldenDay2(t *testing.T) {
+	// Day 2 of the standard dataset: April 14, T=20C, RH=21%, wind=25 km/h,
+	// rain=2.4 mm, from the day-1 codes. This pins one carryover step and
+	// exercises the FFMC rain branch (rain > 0.5) and the DMC rain branch
+	// (rain > 1.5). Computed from the cffdrs equations.
+	s := NewState()
+	s.Step(Weather{Temperature: 17, Humidity: 42, Wind: 25, Rain: 0, Month: time.April, Latitude: 40})
+	got := s.Step(Weather{Temperature: 20, Humidity: 21, Wind: 25, Rain: 2.4, Month: time.April, Latitude: 40})
+
+	cases := []struct {
+		name string
+		got  float64
+		want float64
+		tol  float64
+	}{
+		{"FFMC", float64(got.FFMC), 86.20, 0.02},
+		{"DMC", float64(got.DMC), 10.40, 0.02},
+		{"DC", float64(got.DC), 23.57, 0.02},
+		{"ISI", float64(got.ISI), 8.77, 0.02},
+		{"BUI", float64(got.BUI), 10.35, 0.02},
+		{"FWI", float64(got.FWI), 9.22, 0.05},
+		{"DSR", float64(got.DSR), 1.39, 0.05},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			closeTo(t, tc.got, tc.want, tc.tol, tc.name)
+		})
+	}
+}
+
 // day is one row of testdata/test_fwi.csv.
 type day struct {
 	mon              time.Month
@@ -140,6 +170,33 @@ func TestStepObs(t *testing.T) {
 				Temperature:      firewx.Some(firewx.Celsius(17)),
 				RelativeHumidity: firewx.Some(firewx.Percent(42)),
 				Precipitation:    firewx.Some(firewx.Millimeters(0)),
+			},
+			wantApplied: false,
+		},
+		{
+			name: "skips without temperature",
+			obs: firewx.Obs{
+				RelativeHumidity: firewx.Some(firewx.Percent(42)),
+				WindSpeed:        firewx.Some(firewx.MetersPerSecond(6.944444)),
+				Precipitation:    firewx.Some(firewx.Millimeters(0)),
+			},
+			wantApplied: false,
+		},
+		{
+			name: "skips without humidity",
+			obs: firewx.Obs{
+				Temperature:   firewx.Some(firewx.Celsius(17)),
+				WindSpeed:     firewx.Some(firewx.MetersPerSecond(6.944444)),
+				Precipitation: firewx.Some(firewx.Millimeters(0)),
+			},
+			wantApplied: false,
+		},
+		{
+			name: "skips without precipitation",
+			obs: firewx.Obs{
+				Temperature:      firewx.Some(firewx.Celsius(17)),
+				RelativeHumidity: firewx.Some(firewx.Percent(42)),
+				WindSpeed:        firewx.Some(firewx.MetersPerSecond(6.944444)),
 			},
 			wantApplied: false,
 		},

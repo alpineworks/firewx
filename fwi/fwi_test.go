@@ -10,20 +10,19 @@ func TestFireWeatherIndexGolden(t *testing.T) {
 
 func TestFireWeatherIndexBranches(t *testing.T) {
 	cases := []struct {
-		name string
-		i    ISI
-		b    BUI
+		name      string
+		i         ISI
+		b         BUI
+		want, tol float64
 	}{
-		// A high BUI (over 80) uses the second duff function.
-		{"high BUI branch", 15, 120},
-		// A low product keeps the index equal to the intermediate value.
-		{"low intensity branch", 0.5, 5},
+		// A high Buildup Index (over 80) uses the second duff function.
+		{"high BUI branch", 15, 120, 44.37, 0.05},
+		// A low product keeps the index equal to the intermediate value bb.
+		{"low intensity branch", 0.5, 5, 0.215, 0.005},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := FireWeatherIndex(tc.i, tc.b); got < 0 || isNaNOrInf(float64(got)) {
-				t.Errorf("%s: got %v", tc.name, got)
-			}
+			closeTo(t, float64(FireWeatherIndex(tc.i, tc.b)), tc.want, tc.tol, tc.name)
 		})
 	}
 }

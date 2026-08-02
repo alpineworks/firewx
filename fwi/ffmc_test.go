@@ -1,11 +1,34 @@
 package fwi
 
-import "testing"
+import (
+	"testing"
+
+	firewx "alpineworks.io/firewx"
+)
 
 func TestFineFuelMoistureCodeGolden(t *testing.T) {
-	// Day 1 of the standard dataset, computed from the cffdrs equations.
-	got := FineFuelMoistureCode(85, 17, 42, 25, 0)
-	closeTo(t, float64(got), 87.65, 0.02, "FFMC(85,17C,42%,25,0)")
+	cases := []struct {
+		name      string
+		prev      FFMC
+		t         firewx.Celsius
+		rh        firewx.Percent
+		wind      firewx.KilometersPerHour
+		rain      firewx.Millimeters
+		want, tol float64
+	}{
+		// Day 1 of the standard dataset (drying branch), from the cffdrs equations.
+		{"drying, no rain", 85, 17, 42, 25, 0, 87.65, 0.02},
+		// A low previous code puts the pre-rain moisture above 150, so the rain
+		// step adds the extra quadratic correction. Wet fuel plus heavy rain keeps
+		// the code low.
+		{"heavy rain on wet fuel (moisture over 150)", 10, 10, 90, 5, 5, 14.25, 0.05},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := FineFuelMoistureCode(tc.prev, tc.t, tc.rh, tc.wind, tc.rain)
+			closeTo(t, float64(got), tc.want, tc.tol, tc.name)
+		})
+	}
 }
 
 func TestFineFuelMoistureCodeProperties(t *testing.T) {
