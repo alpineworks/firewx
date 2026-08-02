@@ -21,7 +21,7 @@ The root module is released at v1.0.0. It carries the shared types and the
 | `simple` | `alpineworks.io/firewx/simple` | Implemented (a package in root) |
 | `fwi` | `alpineworks.io/firewx/fwi` | Implemented |
 | `nfdrs` | `alpineworks.io/firewx/nfdrs` | Stub |
-| `fetch` | `alpineworks.io/firewx/fetch` | Stub |
+| `fetch` | `alpineworks.io/firewx/fetch` | Synoptic client done; FEMS and WRCC pending |
 
 ## Layout
 

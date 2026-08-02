@@ -1,11 +1,17 @@
-// Package fetch provides clients for the public fire weather data sources.
+// Package fetch groups the clients for the public fire weather data sources.
 //
-// Subpackages cover FEMS (the authoritative source for RAWS observations,
-// station metadata and computed NFDRS output), Synoptic Data (raw RAWS
-// observations, useful for gap filling) and WRCC (the station inventory).
+// The clients live in subpackages, one per source:
 //
-// These live in a separate module so that consumers who only want the
-// calculations do not inherit an HTTP client and its dependency tree.
+//   - synoptic: raw RAWS observations from the Synoptic Weather API.
+//   - fems: RAWS observations, station metadata, and computed NFDRS output from
+//     the Fire Environment Mapping System. Not implemented yet.
+//   - wrcc: the RAWS station inventory from the Western Regional Climate Center.
+//     Not implemented yet.
 //
-// Status: not yet implemented. See the repository README for phasing.
+// The clients live in a separate module, so a consumer who only wants the fire
+// danger calculations does not inherit an HTTP client and its dependencies.
+//
+// Every client constructor uses the functional options pattern. The New
+// function takes a variadic list of Option values. A caller can construct a
+// client with no options and get sensible defaults.
 package fetch
