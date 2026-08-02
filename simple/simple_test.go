@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	firewx "github.com/alpineworks/firewx"
+	firewx "alpineworks.io/firewx"
 )
 
 // Validation sources for this package. The full references are in README.md.

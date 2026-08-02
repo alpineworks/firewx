@@ -3,7 +3,7 @@ package simple
 import (
 	"math"
 
-	firewx "github.com/alpineworks/firewx"
+	firewx "alpineworks.io/firewx"
 )
 
 // KBDI is the Keetch-Byram Drought Index. It is a soil moisture deficit. The

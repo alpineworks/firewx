@@ -1,6 +1,6 @@
 package simple
 
-import firewx "github.com/alpineworks/firewx"
+import firewx "alpineworks.io/firewx"
 
 // Nesterov is the Nesterov ignition index. It is a cumulative measure of
 // dryness. It adds a daily term of temperature and dryness across a run of days

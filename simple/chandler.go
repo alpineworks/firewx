@@ -3,7 +3,7 @@ package simple
 import (
 	"math"
 
-	firewx "github.com/alpineworks/firewx"
+	firewx "alpineworks.io/firewx"
 )
 
 // Chandler is the Chandler Burning Index (CBI). The index uses the temperature

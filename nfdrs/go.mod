@@ -1,3 +1,3 @@
-module github.com/alpineworks/firewx/nfdrs
+module alpineworks.io/firewx/nfdrs
 
 go 1.22

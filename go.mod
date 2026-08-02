@@ -1,3 +1,3 @@
-module github.com/alpineworks/firewx
+module alpineworks.io/firewx
 
 go 1.22

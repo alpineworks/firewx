@@ -1,3 +1,3 @@
-module github.com/alpineworks/firewx/fwi
+module alpineworks.io/firewx/fwi
 
 go 1.22

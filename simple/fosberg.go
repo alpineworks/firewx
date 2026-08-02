@@ -3,7 +3,7 @@ package simple
 import (
 	"math"
 
-	firewx "github.com/alpineworks/firewx"
+	firewx "alpineworks.io/firewx"
 )
 
 // Fosberg is the Fosberg Fire Weather Index (FFWI). The index is a number

@@ -1,6 +1,6 @@
 package simple
 
-import firewx "github.com/alpineworks/firewx"
+import firewx "alpineworks.io/firewx"
 
 // Angstrom is the Angström index. It is a Swedish index. It is simple, and a
 // person can calculate it without a computer. A low value means more danger.

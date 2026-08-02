@@ -1,6 +1,6 @@
 package simple
 
-import firewx "github.com/alpineworks/firewx"
+import firewx "alpineworks.io/firewx"
 
 // HDW is the Hot-Dry-Windy index. It is the product of the vapour pressure
 // deficit and the wind speed. It has units of hPa·m/s. It is not a fitted score.
