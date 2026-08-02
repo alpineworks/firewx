@@ -3,6 +3,7 @@
   "separate-pull-requests": true,
   "bootstrap-sha": "0cc8e57ab90964f4176be5794f83047bf06c9f35",
   "tag-separator": "/",
+  "bump-minor-pre-major": true,
   "packages": {
     ".": {
       "release-type": "go",
