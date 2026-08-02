@@ -12,15 +12,15 @@ implementations are C++ (`firelab/NFDRS4`), R (`cffdrs/cffdrs_r`) and Python
 
 ## Status
 
-The root module is released at v1.0.0. It carries the shared types and the
-`simple` indices. The `fwi`, `nfdrs`, and `fetch` modules are stubs.
+The root module carries the shared types and the `simple` indices. The `fwi`,
+`nfdrs`, and `fetch` modules are implemented.
 
 | Module | Import path | Status |
 | --- | --- | --- |
-| root | `alpineworks.io/firewx` | Released v1.0.0: types, units, and `simple` |
+| root | `alpineworks.io/firewx` | Released: types, units, and `simple` |
 | `simple` | `alpineworks.io/firewx/simple` | Implemented (a package in root) |
 | `fwi` | `alpineworks.io/firewx/fwi` | Implemented |
-| `nfdrs` | `alpineworks.io/firewx/nfdrs` | Stub |
+| `nfdrs` | `alpineworks.io/firewx/nfdrs` | Implemented: Nelson, Rothermel, GSI, and the four indices with a driver |
 | `fetch` | `alpineworks.io/firewx/fetch` | Synoptic and FEMS clients done; WRCC pending |
 
 ## Layout
@@ -37,10 +37,10 @@ firewx/
 ├── simple/                     package, not a module
 ├── fwi/     go.mod             alpineworks.io/firewx/fwi
 ├── nfdrs/   go.mod             alpineworks.io/firewx/nfdrs
+│   │                           fuel models, indices, and the driver
 │   ├── nelson/                 dead fuel moisture solver
 │   ├── rothermel/              spread model and size-class weighting
-│   ├── gsi/                    growing season index
-│   └── fuelmodel/              parameter tables
+│   └── gsi/                    growing season index
 └── fetch/   go.mod             alpineworks.io/firewx/fetch
     ├── fems/
     ├── synoptic/
