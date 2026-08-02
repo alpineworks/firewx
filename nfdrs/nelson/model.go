@@ -2,6 +2,7 @@ package nelson
 
 import (
 	"math"
+	"sort"
 	"time"
 
 	firewx "alpineworks.io/firewx"
@@ -386,10 +387,27 @@ func (s *Stick) MoistureContent() firewx.Percent {
 	return firewx.Percent(wbr * 100.0)
 }
 
+// MedianRadialMoisture returns the median moisture content of the radial nodes,
+// as a percentage. This is the dead fuel moisture that the National Fire Danger
+// Rating System uses, as medianRadialMoisture in firelab/NFDRS4 defines it.
+func (s *Stick) MedianRadialMoisture() firewx.Percent {
+	sorted := make([]float64, len(s.W))
+	copy(sorted, s.W)
+	sort.Float64s(sorted)
+	return firewx.Percent(sorted[len(sorted)/2] * 100.0)
+}
+
 // SurfaceMoisture returns the moisture content of the surface node (g/g as a
 // percentage).
 func (s *Stick) SurfaceMoisture() firewx.Percent {
 	return firewx.Percent(s.W[0] * 100.0)
+}
+
+// SurfaceTemperature returns the temperature of the surface node. The National
+// Fire Danger Rating System uses it as the fuel surface temperature for the
+// ignition component.
+func (s *Stick) SurfaceTemperature() firewx.Celsius {
+	return firewx.Celsius(s.T[0])
 }
 
 // UpdateObs advances the stick from a firewx.Obs over the elapsed time. The

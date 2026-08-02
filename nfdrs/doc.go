@@ -19,6 +19,10 @@
 // takes the fuel moisture, the drought, the wind, and the slope, then it returns
 // the four indices.
 //
+// The Driver type is the stateful driver. It takes the hourly weather, runs the
+// fuel moisture models, then it computes the indices. Use Compute for the pure
+// index equations, or Driver for the full system from the raw weather.
+//
 // The equations are a port of the iCalcIndexes function of the firelab/NFDRS4
 // C++ program, which follows the National Fire Danger Rating System of 2016.
 //
