@@ -1,6 +1,9 @@
 package firewx
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 // Station describes the site an observation came from, including the terms
 // needed to correct a non-standard sensor exposure toward the reference
@@ -80,14 +83,24 @@ type Obs struct {
 }
 
 // DewPoint returns the dew point derived from temperature and relative
-// humidity, or an empty Opt if either input is missing.
+// humidity. It returns an empty Opt if either input is absent, or if the dew
+// point is undefined.
+//
+// The package DewPoint function returns NaN at a non-positive humidity. This
+// method must not put that NaN into a present Opt, because NaN then propagates
+// silently through the models. Therefore an undefined dew point becomes an
+// absent value here.
 func (o Obs) DewPoint() Opt[Celsius] {
 	t, okT := o.Temperature.Get()
 	rh, okRH := o.RelativeHumidity.Get()
 	if !okT || !okRH {
 		return None[Celsius]()
 	}
-	return Some(DewPoint(t, rh))
+	d := DewPoint(t, rh)
+	if math.IsNaN(float64(d)) {
+		return None[Celsius]()
+	}
+	return Some(d)
 }
 
 // VaporPressureDeficit returns the VPD derived from temperature and relative

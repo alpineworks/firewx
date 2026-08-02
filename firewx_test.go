@@ -116,3 +116,13 @@ func TestObsDerivedValuesPropagateAbsence(t *testing.T) {
 		t.Error("VPD should be absent without RH")
 	}
 }
+
+func TestObsDewPointAbsentWhenUndefined(t *testing.T) {
+	// DewPoint is undefined at zero humidity and the bare function returns NaN.
+	// Obs.DewPoint must report absence, never a present Opt holding NaN.
+	o := Obs{Temperature: Some(Celsius(20)), RelativeHumidity: Some(Percent(0))}
+	if got := o.DewPoint(); got.Valid() {
+		v, _ := got.Get()
+		t.Errorf("dew point should be absent at 0%% RH, got present %v", v)
+	}
+}
