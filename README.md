@@ -114,6 +114,13 @@ go test ./...
 for m in . fwi nfdrs fetch; do (cd "$m" && GOWORK=off go test ./...); done
 ```
 
+## Documentation
+
+You must write all documentation in ASD-STE100 Simplified Technical English.
+This applies to the Markdown files, the Go doc comments, the changelog prose,
+and the pull request text. `CLAUDE.md` gives the rules. The older prose in this
+file is not compliant yet.
+
 ## Releases
 
 Release Please, manifest mode, one release per module. Tags are `v1.2.3` for

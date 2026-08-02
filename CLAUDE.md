@@ -46,6 +46,41 @@ runs; Nelson's radial nodes must survive exactly.
 
 **Everything stays v0.x until NFDRS is complete.**
 
+**All documentation is ASD-STE100 Simplified Technical English.** See the
+Documentation language section. This applies to every word we write for a
+reader: `README.md`, this file, package and function doc comments, changelog
+prose, and pull request descriptions.
+
+## Documentation language
+
+You must write all documentation in ASD-STE100 Simplified Technical English
+(STE). This is a strict requirement. It applies to Markdown files, Go doc
+comments, and any other prose that a reader sees.
+
+Obey these rules:
+
+- Use only approved words from the STE dictionary. Use approved technical names
+  and technical verbs for domain terms (for example "moisture code", "dew
+  point", "interpolate").
+- Write short sentences. Use a maximum of 20 words for an instruction and 25
+  words for a description.
+- Write one instruction in one sentence.
+- Use the active voice.
+- Use the articles "a", "an", and "the".
+- Use simple verb tenses: the present, the past, and the future. Do not use the
+  "-ing" form, unless the word is a technical name.
+- Use one word for one meaning. Do not use synonyms. Do not use a noun as a
+  verb.
+- Start a paragraph with its main point. Keep a paragraph to one topic.
+- Use a vertical list for a set of conditions or steps.
+- Do not use slang, jargon, idioms, or contractions.
+- Do not omit words to make a sentence shorter.
+- Write positive statements. Give a warning before you give the action.
+
+Note (2026-08-01): the older prose in this file, in `README.md`, and in the
+root package doc comments is not STE yet. It is a retrofit that is not done. Do
+not copy its style. New documentation must follow the rules above.
+
 ## Bootstrap constraint
 
 Submodules currently have **no `require` on the root module**, deliberately. A
