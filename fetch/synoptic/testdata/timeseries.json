@@ -1,0 +1,40 @@
+{
+  "SUMMARY": {
+    "RESPONSE_CODE": 1,
+    "RESPONSE_MESSAGE": "OK",
+    "NUMBER_OF_OBJECTS": 1,
+    "total_stations": 1
+  },
+  "UNITS": {
+    "air_temp": "Celsius",
+    "relative_humidity": "%",
+    "wind_speed": "m/s",
+    "wind_gust": "m/s",
+    "wind_direction": "Degrees",
+    "solar_radiation": "W/m**2",
+    "precip_accum": "mm"
+  },
+  "STATION": [
+    {
+      "STID": "TT934",
+      "NAME": "TOLT RAWS",
+      "LATITUDE": 47.677,
+      "LONGITUDE": -121.642,
+      "ELEVATION": 400,
+      "OBSERVATIONS": {
+        "date_time": [
+          "2024-08-01T19:00:00Z",
+          "2024-08-01T20:00:00Z",
+          "2024-08-01T21:00:00Z"
+        ],
+        "air_temp_set_1": [24.4, 26.1, null],
+        "relative_humidity_set_1": [38, 34, 33],
+        "wind_speed_set_1": [3.6, 4.1, 4.6],
+        "wind_gust_set_1": [6.2, 7.0, 8.1],
+        "wind_direction_set_1": [200, 210, 205],
+        "solar_radiation_set_1": [780, 810, 795],
+        "precip_accum_set_1": [0, 0, 0]
+      }
+    }
+  ]
+}
