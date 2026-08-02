@@ -112,10 +112,27 @@ published reference; use it.
 
 | Component | Reference |
 | --- | --- |
+| `simple` | ClimInd R package outputs and published worked examples |
 | `fwi` | `cffdrs_r` test vectors |
 | `nelson` | RAWS stations with a physical 10-hr fuel stick sensor |
 | `rothermel` | BehavePlus outputs |
 | `nfdrs` end to end | FEMS-computed ERC, same station and period |
+
+Every package must have tests that use real data. The data can be historical.
+The tests must be rigorous, because they show that the code meets the published
+standard.
+
+Use a test case from a prior implementation of the algorithm when you can. A
+prior implementation is a stronger reference than a value that you calculate
+yourself. The prior implementations are:
+
+- the `cffdrs` R and Python packages, for the Canadian system;
+- the `firelab/NFDRS4` C++ program, for NFDRS;
+- the `ClimInd` R package and published worked examples, for the single-equation
+  indices.
+
+Write the source of each test vector in a comment. Put a large reference set in
+`testdata/`.
 
 For NFDRS: build `firelab/NFDRS4`, run it over a year of FW21 data for a single
 station, freeze the output as `testdata/` golden CSV, then write Go against it.

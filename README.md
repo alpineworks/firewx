@@ -96,6 +96,7 @@ the model drifts.
 
 | Component | Validated against |
 | --- | --- |
+| `simple` | `ClimInd` R package outputs and published worked examples |
 | `fwi` | `cffdrs_r` test vectors |
 | `nelson` | RAWS stations carrying a physical 10-hr fuel stick sensor |
 | `rothermel` | BehavePlus outputs |
@@ -103,6 +104,10 @@ the model drifts.
 
 Build `firelab/NFDRS4`, run it over a year of FW21 data, and freeze the output
 as `testdata/` golden CSV before writing any Go.
+
+Every package must have tests that use real data. The data can be historical.
+Use a test case from a prior implementation of the algorithm when you can,
+because it is a stronger reference than a value that you calculate yourself.
 
 ## Development
 
