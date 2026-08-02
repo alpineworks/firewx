@@ -137,4 +137,4 @@ readable.
 
 ## Licence
 
-TBD
+MIT. See [LICENSE](LICENSE).
