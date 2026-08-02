@@ -2,6 +2,7 @@ package nfdrs
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"math"
 	"os"
 	"strconv"
@@ -108,6 +109,100 @@ func TestDriverRejectsIncompleteObs(t *testing.T) {
 	}
 	if d.Update(o) {
 		t.Errorf("the driver accepted an incomplete observation")
+	}
+}
+
+// TestDriverStateRoundTrip checks that a driver marshals to JSON and back with
+// an exact round trip. A restored driver produces identical output for the same
+// further weather, so a caller can persist the driver and resume without the
+// spin-up.
+func TestDriverStateRoundTrip(t *testing.T) {
+	cfg := Config{
+		FuelModel: FuelModelY, Latitude: 47.7, SlopeClass: 1, KBDIThreshold: 800,
+		MeanAnnualPrecip: 40, AnnualHerb: true, RegObsHour: 13, LSTOffset: -8 * time.Hour,
+	}
+	base := time.Date(2026, 7, 1, 0, 0, 0, 0, time.UTC)
+	mkObs := func(i int) firewx.Obs {
+		fi := float64(i)
+		rain := 0.0
+		if i%17 == 0 {
+			rain = 3.0
+		}
+		return firewx.Obs{
+			Time:             base.Add(time.Duration(i) * time.Hour),
+			Temperature:      firewx.Some(firewx.Celsius(15 + 10*math.Sin(fi/6))),
+			RelativeHumidity: firewx.Some(firewx.Percent(40 + 30*math.Cos(fi/5))),
+			SolarRadiation:   firewx.Some(firewx.WattsPerSquareMeter(400 * math.Abs(math.Sin(fi/12)))),
+			Precipitation:    firewx.Some(firewx.Millimeters(rain)),
+			WindSpeed:        firewx.Some(firewx.MetersPerSecond(3)),
+		}
+	}
+
+	// Run the driver across two daily boundaries so the daily state is set.
+	orig := NewDriver(cfg)
+	for i := range 60 {
+		orig.Update(mkObs(i))
+	}
+
+	blob, err := json.Marshal(orig.State())
+	if err != nil {
+		t.Fatal(err)
+	}
+	var st DriverState
+	if err := json.Unmarshal(blob, &st); err != nil {
+		t.Fatal(err)
+	}
+	restored := NewDriver(cfg)
+	if err := restored.SetState(st); err != nil {
+		t.Fatal(err)
+	}
+
+	// A second marshal after the restore is byte-identical.
+	blob2, err := json.Marshal(restored.State())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(blob) != string(blob2) {
+		t.Fatalf("re-marshalled driver state differs from the original")
+	}
+
+	// Drive both with the same further weather. The output must stay identical.
+	for i := 60; i < 96; i++ {
+		o := mkObs(i)
+		orig.Update(o)
+		restored.Update(o)
+		if orig.Indices() != restored.Indices() {
+			t.Fatalf("step %d indices: original %+v, restored %+v", i, orig.Indices(), restored.Indices())
+		}
+		a1, a10, a100, a1000 := orig.DeadMoistures()
+		b1, b10, b100, b1000 := restored.DeadMoistures()
+		if a1 != b1 || a10 != b10 || a100 != b100 || a1000 != b1000 {
+			t.Fatalf("step %d dead moistures differ", i)
+		}
+	}
+}
+
+// TestDriverSetStateErrors checks that SetState rejects a wrong schema version
+// and an absent sub-model.
+func TestDriverSetStateErrors(t *testing.T) {
+	cfg := Config{FuelModel: FuelModelY, SlopeClass: 1, KBDIThreshold: 800, RegObsHour: 13}
+	d := NewDriver(cfg)
+	good := NewDriver(cfg).State()
+
+	wrongVersion := good
+	wrongVersion.SchemaVersion = good.SchemaVersion + 1
+	if d.SetState(wrongVersion) == nil {
+		t.Errorf("expected an error for a wrong schema version")
+	}
+
+	absentModel := good
+	absentModel.Stick10 = nil
+	if d.SetState(absentModel) == nil {
+		t.Errorf("expected an error for an absent sub-model")
+	}
+
+	if err := d.SetState(good); err != nil {
+		t.Errorf("unexpected error for a valid state: %v", err)
 	}
 }
 

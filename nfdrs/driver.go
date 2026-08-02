@@ -1,6 +1,7 @@
 package nfdrs
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -9,6 +10,10 @@ import (
 	"alpineworks.io/firewx/nfdrs/nelson"
 	"alpineworks.io/firewx/simple"
 )
+
+// driverSchemaVersion is the schema version stamped into a DriverState. Increase
+// it when the meaning of a field changes.
+const driverSchemaVersion = 1
 
 // Config holds the site settings for a Driver.
 type Config struct {
@@ -215,4 +220,120 @@ func (d *Driver) Indices() Indices { return d.indices }
 // recent update, as percentages.
 func (d *Driver) DeadMoistures() (mc1, mc10, mc100, mc1000 firewx.Percent) {
 	return firewx.Percent(d.mc1), firewx.Percent(d.mc10), firewx.Percent(d.mc100), firewx.Percent(d.mc1000)
+}
+
+// DriverState is the full serializable state of a Driver. It holds the state of
+// the four Nelson sticks, the two live fuel moisture models, the drought index,
+// and the driver's own daily accumulators and last outputs.
+//
+// A DriverState marshals to JSON and back with an exact round trip, so a caller
+// can persist a Driver between runs and resume without the long spin-up that the
+// 1000-hour stick needs from a cold start. The caller must construct the Driver
+// with the same Config, then restore the state.
+//
+// The sub-model pointers alias the Driver's live models. Marshal the state
+// before the next call to Update.
+type DriverState struct {
+	SchemaVersion int `json:"schema_version"`
+
+	Stick1    *nelson.Stick    `json:"stick_1hr"`
+	Stick10   *nelson.Stick    `json:"stick_10hr"`
+	Stick100  *nelson.Stick    `json:"stick_100hr"`
+	Stick1000 *nelson.Stick    `json:"stick_1000hr"`
+	Herb      *gsi.Model       `json:"herb"`
+	Woody     *gsi.Model       `json:"woody"`
+	KBDI      simple.KBDIState `json:"kbdi"`
+
+	// Dead fuel moisture and fuel temperature from the most recent update.
+	MC1      float64 `json:"mc_1hr"`
+	MC10     float64 `json:"mc_10hr"`
+	MC100    float64 `json:"mc_100hr"`
+	MC1000   float64 `json:"mc_1000hr"`
+	FuelTemp float64 `json:"fuel_temp_c"`
+
+	// Live fuel moisture and drought from the most recent daily update.
+	GSIValue  float64 `json:"gsi"`
+	MCHerb    float64 `json:"mc_herb"`
+	MCWood    float64 `json:"mc_woody"`
+	KBDIValue float64 `json:"kbdi_value"`
+
+	// Daily accumulators over the current local standard day.
+	HaveDay    bool    `json:"have_day"`
+	DayMinTemp float64 `json:"day_min_temp_f"`
+	DayMaxTemp float64 `json:"day_max_temp_f"`
+	DayMinRH   float64 `json:"day_min_rh"`
+	DayPrecip  float64 `json:"day_precip_in"`
+
+	Last     time.Time `json:"last"`
+	HaveLast bool      `json:"have_last"`
+	Indices  Indices   `json:"indices"`
+}
+
+// State returns the full state of the Driver. Marshal it to JSON to persist the
+// Driver between runs.
+func (d *Driver) State() DriverState {
+	return DriverState{
+		SchemaVersion: driverSchemaVersion,
+		Stick1:        d.stick1,
+		Stick10:       d.stick10,
+		Stick100:      d.stick100,
+		Stick1000:     d.stick1000,
+		Herb:          d.herb,
+		Woody:         d.woody,
+		KBDI:          d.kbdi,
+		MC1:           d.mc1,
+		MC10:          d.mc10,
+		MC100:         d.mc100,
+		MC1000:        d.mc1000,
+		FuelTemp:      float64(d.fuelTemp),
+		GSIValue:      d.gsiValue,
+		MCHerb:        d.mcHerb,
+		MCWood:        d.mcWood,
+		KBDIValue:     d.kbdiValue,
+		HaveDay:       d.haveDay,
+		DayMinTemp:    d.dayMinTemp,
+		DayMaxTemp:    d.dayMaxTemp,
+		DayMinRH:      d.dayMinRH,
+		DayPrecip:     float64(d.dayPrecip),
+		Last:          d.last,
+		HaveLast:      d.haveLast,
+		Indices:       d.indices,
+	}
+}
+
+// SetState restores the Driver from a saved state. The Driver keeps its Config,
+// so construct it with the same Config first. SetState returns an error if the
+// schema version does not match or a sub-model is absent.
+func (d *Driver) SetState(s DriverState) error {
+	if s.SchemaVersion != driverSchemaVersion {
+		return fmt.Errorf("nfdrs: driver state schema version %d, want %d", s.SchemaVersion, driverSchemaVersion)
+	}
+	if s.Stick1 == nil || s.Stick10 == nil || s.Stick100 == nil || s.Stick1000 == nil || s.Herb == nil || s.Woody == nil {
+		return fmt.Errorf("nfdrs: driver state has an absent sub-model")
+	}
+	d.stick1 = s.Stick1
+	d.stick10 = s.Stick10
+	d.stick100 = s.Stick100
+	d.stick1000 = s.Stick1000
+	d.herb = s.Herb
+	d.woody = s.Woody
+	d.kbdi = s.KBDI
+	d.mc1 = s.MC1
+	d.mc10 = s.MC10
+	d.mc100 = s.MC100
+	d.mc1000 = s.MC1000
+	d.fuelTemp = firewx.Celsius(s.FuelTemp)
+	d.gsiValue = s.GSIValue
+	d.mcHerb = s.MCHerb
+	d.mcWood = s.MCWood
+	d.kbdiValue = s.KBDIValue
+	d.haveDay = s.HaveDay
+	d.dayMinTemp = s.DayMinTemp
+	d.dayMaxTemp = s.DayMaxTemp
+	d.dayMinRH = s.DayMinRH
+	d.dayPrecip = firewx.Inches(s.DayPrecip)
+	d.last = s.Last
+	d.haveLast = s.HaveLast
+	d.indices = s.Indices
+	return nil
 }
