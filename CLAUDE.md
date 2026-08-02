@@ -44,6 +44,13 @@ plus a stateful driver. Model state is a plain struct, exported fields, schema
 version field, property-tested JSON round trip. State is persisted between
 runs; Nelson's radial nodes must survive exactly.
 
+**Functional options for every client.** A client constructor (for example the
+`fetch` clients for FEMS, Synoptic and WRCC) uses the functional options
+pattern. The `New` function takes a variadic list of `Option` values, and each
+option sets one field. Do not add a constructor that takes a long parameter
+list or a config struct. A caller must be able to construct a client with no
+options and get sensible defaults.
+
 **Everything stays v0.x until NFDRS is complete.**
 
 **All documentation is ASD-STE100 Simplified Technical English.** See the
@@ -96,6 +103,9 @@ genuinely import the root.
 - Conventional commits, scoped to the component: `feat(nfdrs):`, `fix(fwi):`.
   Release Please routes by file path but the scope makes changelogs readable.
 - `gofmt` clean. CI fails otherwise.
+- One test file per source file. Put the tests for `units.go` in `units_test.go`
+  and the tests for `obs.go` in `obs_test.go`. Put shared test helpers, such as
+  `closeTo`, in `helpers_test.go`.
 - Verify both ways before claiming a change works:
   ```sh
   go test ./...                                        # workspace
