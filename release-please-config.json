@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "separate-pull-requests": true,
+  "bootstrap-sha": "0cc8e57ab90964f4176be5794f83047bf06c9f35",
+  "packages": {
+    ".": {
+      "release-type": "go",
+      "package-name": "firewx",
+      "include-component-in-tag": false,
+      "changelog-path": "CHANGELOG.md"
+    },
+    "fwi": {
+      "release-type": "go",
+      "component": "fwi"
+    },
+    "nfdrs": {
+      "release-type": "go",
+      "component": "nfdrs"
+    },
+    "fetch": {
+      "release-type": "go",
+      "component": "fetch"
+    }
+  },
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "deps", "section": "Dependencies" },
+    { "type": "docs", "section": "Documentation", "hidden": false },
+    { "type": "refactor", "section": "Refactoring", "hidden": true },
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "chore", "section": "Miscellaneous", "hidden": true }
+  ]
+}
