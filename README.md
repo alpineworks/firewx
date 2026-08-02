@@ -19,7 +19,7 @@ The root module is released at v1.0.0. It carries the shared types and the
 | --- | --- | --- |
 | root | `alpineworks.io/firewx` | Released v1.0.0: types, units, and `simple` |
 | `simple` | `alpineworks.io/firewx/simple` | Implemented (a package in root) |
-| `fwi` | `alpineworks.io/firewx/fwi` | Stub |
+| `fwi` | `alpineworks.io/firewx/fwi` | Implemented |
 | `nfdrs` | `alpineworks.io/firewx/nfdrs` | Stub |
 | `fetch` | `alpineworks.io/firewx/fetch` | Stub |
 
