@@ -3,14 +3,31 @@ package firewx
 import "testing"
 
 func TestAdjustWindHeight(t *testing.T) {
-	// A 3 m backyard sensor over suburban roughness, corrected up to the
-	// 10 m exposure the FWI system assumes, must report a higher speed.
-	got := AdjustWindHeight(4.0, 3.0, HeightFWI, RoughnessSuburban)
-	if got <= 4.0 {
-		t.Errorf("correcting upward should increase speed, got %v", got)
+	cases := []struct {
+		name     string
+		v        MetersPerSecond
+		from, to Meters
+		z0       Roughness
+		want     float64 // exact expected value, used when greaterThanV is false
+		// greaterThanV requires only that the corrected speed exceeds v, which is
+		// what a correction up from a lower, sheltered sensor must produce.
+		greaterThanV bool
+	}{
+		{"correcting upward increases speed", 4.0, 3.0, HeightFWI, RoughnessSuburban, 0, true},
+		{"identity when heights match", 4.0, 10, 10, RoughnessOpenGrass, 4.0, false},
 	}
-	// Identity when heights match.
-	if got := AdjustWindHeight(4.0, 10, 10, RoughnessOpenGrass); got != 4.0 {
-		t.Errorf("identity case: got %v", got)
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := float64(AdjustWindHeight(tc.v, tc.from, tc.to, tc.z0))
+			if tc.greaterThanV {
+				if got <= float64(tc.v) {
+					t.Errorf("%s: got %v, want > %v", tc.name, got, tc.v)
+				}
+				return
+			}
+			if got != tc.want {
+				t.Errorf("%s: got %v, want %v", tc.name, got, tc.want)
+			}
+		})
 	}
 }

@@ -51,7 +51,9 @@ option sets one field. Do not add a constructor that takes a long parameter
 list or a config struct. A caller must be able to construct a client with no
 options and get sensible defaults.
 
-**Everything stays v0.x until NFDRS is complete.**
+**Semantic versioning from v1.0.0.** The modules are released at v1.0.0. A
+change that breaks the public API of a module needs a new major version. Design
+the public surface with care, because a major bump is expensive for consumers.
 
 **All documentation is ASD-STE100 Simplified Technical English.** See the
 Documentation language section. This applies to every word we write for a
@@ -90,13 +92,12 @@ not copy its style. New documentation must follow the rules above.
 
 ## Bootstrap constraint
 
-Submodules currently have **no `require` on the root module**, deliberately. A
-submodule cannot build outside the workspace until the root has a published
-tag, so the isolated CI job fails on an unresolvable version if the require is
-added early.
+The root module is now tagged at v1.0.0. Before this tag, the submodules had
+**no `require` on the root module**, because the isolated CI job could not
+resolve an unpublished version.
 
-Add the requires only after root `v0.1.0` is tagged, and only to modules that
-genuinely import the root.
+A submodule that imports the root now adds `require alpineworks.io/firewx
+v1.0.0`. Add the require only to a module that imports the root.
 
 ## Working conventions
 
@@ -106,6 +107,9 @@ genuinely import the root.
 - One test file per source file. Put the tests for `units.go` in `units_test.go`
   and the tests for `obs.go` in `obs_test.go`. Put shared test helpers, such as
   `closeTo`, in `helpers_test.go`.
+- Write table-driven tests. Use a slice of named cases and a loop with `t.Run`
+  for each case. Use a different form only when you cannot write the test as a
+  table (for example a single sequence of stateful steps).
 - Verify both ways before claiming a change works:
   ```sh
   go test ./...                                        # workspace
