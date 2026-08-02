@@ -103,6 +103,13 @@ v1.0.0`. Add the require only to a module that imports the root.
 
 - Conventional commits, scoped to the component: `feat(nfdrs):`, `fix(fwi):`.
   Release Please routes by file path but the scope makes changelogs readable.
+- Keep a documentation change in its own commit with the `docs:` prefix,
+  separate from a `feat` or a `fix`. Release Please routes a file to a package by
+  its path, so a root file such as `README.md` or `CLAUDE.md` belongs to the root
+  package. A `feat` that also edits the `README.md` therefore bumps the root. A
+  `docs:` commit does not bump a package (see `changelog-sections`), so an
+  isolated documentation change is safe. Only `feat`, `fix`, `perf`, and `deps`
+  trigger a release; `docs`, `chore`, `ci`, `test`, and `refactor` do not.
 - `gofmt` clean. CI fails otherwise.
 - One test file per source file. Put the tests for `units.go` in `units_test.go`
   and the tests for `obs.go` in `obs_test.go`. Put shared test helpers, such as
