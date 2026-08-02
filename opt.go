@@ -63,6 +63,7 @@ func MapOpt[T, U any](o Opt[T], fn func(T) U) Opt[U] {
 	return Some(fn(o.val))
 }
 
+// MarshalJSON encodes a present value as itself and an absent value as null.
 func (o Opt[T]) MarshalJSON() ([]byte, error) {
 	if !o.ok {
 		return []byte("null"), nil
@@ -70,6 +71,8 @@ func (o Opt[T]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(o.val)
 }
 
+// UnmarshalJSON decodes null as an absent value and any other JSON as a present
+// value.
 func (o *Opt[T]) UnmarshalJSON(b []byte) error {
 	if bytes.Equal(bytes.TrimSpace(b), []byte("null")) {
 		var zero T

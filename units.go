@@ -51,18 +51,22 @@ type KilometersPerHour float64
 // MilesPerHour is a wind speed, as required by NFDRS and the Fosberg index.
 type MilesPerHour float64
 
+// KilometersPerHour converts v to kilometres per hour.
 func (v MetersPerSecond) KilometersPerHour() KilometersPerHour {
 	return KilometersPerHour(float64(v) * 3.6)
 }
 
+// MilesPerHour converts v to miles per hour.
 func (v MetersPerSecond) MilesPerHour() MilesPerHour {
 	return MilesPerHour(float64(v) * 2.2369362920544)
 }
 
+// MetersPerSecond converts v to metres per second.
 func (v KilometersPerHour) MetersPerSecond() MetersPerSecond {
 	return MetersPerSecond(float64(v) / 3.6)
 }
 
+// MetersPerSecond converts v to metres per second.
 func (v MilesPerHour) MetersPerSecond() MetersPerSecond {
 	return MetersPerSecond(float64(v) / 2.2369362920544)
 }
@@ -79,7 +83,10 @@ type Millimeters float64
 // Keetch-Byram Drought Index.
 type Inches float64
 
-func (m Millimeters) Inches() Inches      { return Inches(float64(m) / 25.4) }
+// Inches converts m to inches.
+func (m Millimeters) Inches() Inches { return Inches(float64(m) / 25.4) }
+
+// Millimeters converts i to millimetres.
 func (i Inches) Millimeters() Millimeters { return Millimeters(float64(i) * 25.4) }
 
 // Meters is a length, used for sensor heights and station elevation.
@@ -88,7 +95,10 @@ type Meters float64
 // Feet is a length. NFDRS specifies its reference anemometer height in feet.
 type Feet float64
 
-func (m Meters) Feet() Feet   { return Feet(float64(m) / 0.3048) }
+// Feet converts m to feet.
+func (m Meters) Feet() Feet { return Feet(float64(m) / 0.3048) }
+
+// Meters converts f to metres.
 func (f Feet) Meters() Meters { return Meters(float64(f) * 0.3048) }
 
 // ---------------------------------------------------------------------------
@@ -117,8 +127,11 @@ type Kilopascals float64
 // and for the Hot-Dry-Windy index's vapour pressure deficit term.
 type Hectopascals float64
 
+// Hectopascals converts k to hectopascals.
 func (k Kilopascals) Hectopascals() Hectopascals { return Hectopascals(float64(k) * 10.0) }
-func (h Hectopascals) Kilopascals() Kilopascals  { return Kilopascals(float64(h) / 10.0) }
+
+// Kilopascals converts h to kilopascals.
+func (h Hectopascals) Kilopascals() Kilopascals { return Kilopascals(float64(h) / 10.0) }
 
 // ---------------------------------------------------------------------------
 // Psychrometrics
