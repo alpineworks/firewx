@@ -119,7 +119,7 @@ func (s *KBDIState) Step(maxT firewx.Fahrenheit, rain firewx.Inches) {
 
 // StepObs moves the index forward from an observation. It returns true if it
 // applied the step. An absent maximum temperature or precipitation leaves the
-// state unchanged and returns false. A missing rain must not become a zero,
+// state unchanged and returns false. An absent rain must not become a zero,
 // because a drought could deepen through rain that the station did not see.
 //
 // KBDI uses the daily maximum temperature. One observation's temperature is the

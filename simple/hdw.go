@@ -4,13 +4,17 @@ import firewx "github.com/alpineworks/firewx"
 
 // HDW is the Hot-Dry-Windy index. It is the product of the vapour pressure
 // deficit and the wind speed. It has units of hPa·m/s. It is not a fitted score.
-// Use it to rank the days of a forecast against each other. Do not read it
-// against a fixed danger scale.
+// Use it to rank the days of a forecast against each other. Do not compare it to
+// a fixed danger scale.
 //
 // The published index takes the maximum of the product through the depth of the
 // daytime boundary layer. This surface form uses the surface vapour pressure
 // deficit and the surface wind. This is the practical approximation when you
 // have only station observations.
+//
+// This package uses the vapour pressure deficit in hectopascals. This agrees
+// with Srock et al. 2018 and the USDA HDW product. The firebehavioR R package
+// uses kilopascals, and its value is 10 times smaller.
 type HDW float64
 
 // HDWIndex calculates the surface Hot-Dry-Windy index. The inputs are a vapour

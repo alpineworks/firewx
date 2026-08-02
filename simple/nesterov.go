@@ -29,8 +29,8 @@ func (n Nesterov) Class() DangerClass {
 // dew point depression. Both are in degrees Celsius. The driver adds this term
 // each day. The function is public so that a caller can sum the term across a
 // different calendar.
-func NesterovDaily(t, dew firewx.Celsius) float64 {
-	return float64(t) * (float64(t) - float64(dew))
+func NesterovDaily(t, dew firewx.Celsius) Nesterov {
+	return Nesterov(float64(t) * (float64(t) - float64(dew)))
 }
 
 // nesterovRainReset is the daily precipitation limit in millimetres. Above this
@@ -58,13 +58,13 @@ func (s *NesterovState) Step(t, dew firewx.Celsius, precip firewx.Millimeters) {
 		s.Index = 0
 		return
 	}
-	s.Index += Nesterov(NesterovDaily(t, dew))
+	s.Index += NesterovDaily(t, dew)
 }
 
 // StepObs moves the index forward from an observation. It derives the dew point
 // from the temperature and the humidity. It returns true if it applied the step.
 // An absent temperature, humidity, or precipitation leaves the state unchanged
-// and returns false. A missing precipitation must not become a zero, because a
+// and returns false. An absent precipitation must not become a zero, because a
 // zero could carry the index through a wet spell that must reset it.
 func (s *NesterovState) StepObs(o firewx.Obs) bool {
 	t, okT := o.Temperature.Get()

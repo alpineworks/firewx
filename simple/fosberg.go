@@ -23,6 +23,10 @@ type Fosberg float64
 // Reference: Fosberg, M.A. 1978. The code limits the equilibrium moisture
 // content to 30 percent. At 30 percent the moisture term is zero and a fire does
 // not spread. Above 30 percent the published equation gives a negative value.
+//
+// This code uses the original Fosberg equilibrium moisture content. The
+// firebehavioR R package uses the Simard fuel moisture model in its place, so
+// its Fosberg values differ from these.
 func FosbergIndex(t firewx.Fahrenheit, rh firewx.Percent, wind firewx.MilesPerHour) Fosberg {
 	m := fosbergEMC(float64(t), float64(rh))
 	if m > 30 {
