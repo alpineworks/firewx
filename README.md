@@ -138,6 +138,11 @@ readable.
 
 ## References
 
+Every algorithm and every test vector cites its source. The primary references
+are listed here.
+
+Canadian FWI system, NFDRS, and their components:
+
 - Van Wagner, C.E. 1987. *Development and Structure of the Canadian Forest Fire
   Weather Index System.* Forestry Technical Report 35.
 - Nelson, R.M. 2000. Prediction of diurnal change in 10-hr fuel stick moisture
@@ -146,6 +151,32 @@ readable.
   Developments: A Comprehensive Explanation.* RMRS-GTR-371.
 - Jolly, W.M. et al. 2024. Modernizing the US National Fire Danger Rating
   System (version 4). *Environmental Modelling and Software.*
+
+Single-equation indices (the `simple` package):
+
+- Fosberg, M.A. 1978. Weather in wildland fire management: the fire weather
+  index. *Proceedings of the Conference on Sierra Nevada Meteorology*, 1-4.
+- Chandler, C., Cheney, P., Thomas, P., Trabaud, L., Williams, D. 1983. *Fire in
+  Forestry, Volume 1: Forest Fire Behavior and Effects.* Wiley.
+- Sharples, J.J., McRae, R.H.D., Weber, R.O., Gill, A.M. 2009. A simple index for
+  assessing fire danger rating. *Environmental Modelling & Software* 24(6):
+  764-774. (Chandler and Ångström forms.)
+- Srock, A.F., Charney, J.J., Potter, B.E., Goodrick, S.L. 2018. The
+  Hot-Dry-Windy Index: a new fire weather index. *Atmosphere* 9(7):279.
+- Nesterov, V.G. 1949. *Combustibility of the forest and methods for its
+  determination.* Goslesbumizdat, Moscow. Modern description in Groisman, P.Y.
+  et al. 2007, *Global and Planetary Change* 56(3-4):371-386.
+- Keetch, J.J., Byram, G.M. 1968. *A drought index for forest fire control.*
+  Res. Pap. SE-38. USDA Forest Service, Southeastern Forest Experiment Station.
+- Alexander, M.E. 1990. Computer calculation of the Keetch-Byram Drought
+  Index — programmers beware! *Fire Management Notes* 51(4):23-25. (Corrects the
+  8.30 constant.)
+
+Prior implementations used as test references:
+
+- Ziegler, J.P. et al. 2019. firebehavioR: an R package for fire behavior and
+  danger analysis. *Fire* 2(3):41. (Chandler and Ångström match this package.)
+- ClimInd R package. (Nesterov and KBDI cross-checks.)
 
 ## Licence
 

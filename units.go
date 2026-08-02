@@ -138,7 +138,9 @@ func (h Hectopascals) Kilopascals() Kilopascals { return Kilopascals(float64(h) 
 // ---------------------------------------------------------------------------
 
 // SaturationVaporPressure returns the saturation vapour pressure at
-// temperature t, using the Magnus-Tetens approximation.
+// temperature t, using the Magnus-Tetens approximation. The coefficients
+// (0.6108, 17.27, 237.3) are the form given by Allen et al. 1998, FAO Irrigation
+// and Drainage Paper 56, Equation 11.
 func SaturationVaporPressure(t Celsius) Kilopascals {
 	return Kilopascals(0.6108 * math.Exp(17.27*float64(t)/(float64(t)+237.3)))
 }

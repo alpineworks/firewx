@@ -20,9 +20,10 @@ type Fosberg float64
 // temperature in degrees Fahrenheit, the relative humidity in percent, and the
 // wind speed in miles per hour. These are the units of the published equations.
 //
-// Reference: Fosberg, M.A. 1978. The code limits the equilibrium moisture
-// content to 30 percent. At 30 percent the moisture term is zero and a fire does
-// not spread. Above 30 percent the published equation gives a negative value.
+// Reference: Fosberg, M.A. 1978, Weather in wildland fire management: the fire
+// weather index. The code limits the equilibrium moisture content to 30 percent.
+// At 30 percent the moisture term is zero and a fire does not spread. Above 30
+// percent the published equation gives a negative value.
 //
 // This code uses the original Fosberg equilibrium moisture content. The
 // firebehavioR R package uses the Simard fuel moisture model in its place, so

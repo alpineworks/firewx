@@ -10,6 +10,9 @@ import (
 // and the humidity only. It has no fuel term and no wind term. Many amateur
 // weather stations show this index. Use it mainly to compare with those
 // stations.
+//
+// Reference: Chandler et al. 1983, Fire in Forestry, Volume 1. The formula here
+// is identical to the firebehavioR R package (Sharples et al. 2009).
 type Chandler float64
 
 // ChandlerIndex calculates the Chandler Burning Index. The inputs are the

@@ -10,6 +10,8 @@ import (
 // unit is hundredths of an inch of water. The scale is 0 to 800. Zero is a
 // saturated soil. 800 is the maximum deficit. The index drives the heavy dead
 // fuels. In NFDRS it drives the drought fuel loading.
+//
+// Reference: Keetch and Byram 1968, Res. Pap. SE-38.
 type KBDI float64
 
 // KBDIMax is the upper limit of the index. The unit is hundredths of an inch of
@@ -35,10 +37,11 @@ func (q KBDI) Class() DangerClass {
 // day. The inputs are the current value q, the daily maximum temperature in
 // degrees Fahrenheit, and the mean annual rainfall of the station in inches.
 //
-// The equation uses the corrected constant 8.30 from Keetch and Byram (1968).
-// The original paper printed 0.083, and this makes the factor too large. The
-// code limits the evapotranspiration term to zero or more. Therefore a cool day
-// does not add drought and does not remove drought. Only rain lowers the index.
+// The equation uses the corrected constant 8.30. The original Keetch and Byram
+// (1968) paper printed 0.083, and this makes the factor too large. Alexander
+// 1990 (Fire Management Notes 51(4):23-25) gives the correction. The code limits
+// the evapotranspiration term to zero or more. Therefore a cool day does not add
+// drought and does not remove drought. Only rain lowers the index.
 func KBDIIncrement(q KBDI, maxT firewx.Fahrenheit, meanAnnualRain firewx.Inches) KBDI {
 	et := 0.968*math.Exp(0.0486*float64(maxT)) - 8.30
 	if et < 0 {

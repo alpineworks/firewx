@@ -141,6 +141,19 @@ Property tests worth having alongside the golden vectors: moisture codes stay
 in range, FFMC rises as RH falls, state serialisation round-trips exactly, and
 absent inputs produce absent outputs rather than zeros.
 
+## References and citations
+
+You must cite every reference that you use. This applies to the algorithm and to
+the test data. This is a strict requirement.
+
+- For an algorithm, put the primary reference in the doc comment of the function
+  or the type. Give the author, the year, and the title.
+- For a test vector, put the source in a comment at the test. Name the prior
+  implementation or the published example. Give enough detail to find it again.
+- List the full references in `README.md`.
+
+Do not use an equation or a test value without a citation.
+
 ## Current phase
 
 Phase 0 complete: workspace, four modules, CI, Release Please, root types.

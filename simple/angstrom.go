@@ -5,6 +5,10 @@ import firewx "github.com/alpineworks/firewx"
 // Angstrom is the Angström index. It is a Swedish index. It is simple, and a
 // person can calculate it without a computer. A low value means more danger.
 // This is the opposite of the other indices in this package.
+//
+// Reference: the Ångström index, developed in Sweden by Anders Ångström. The
+// form here follows Sharples et al. 2009 and is identical to the firebehavioR R
+// package.
 type Angstrom float64
 
 // AngstromIndex calculates the Angström index. The inputs are the temperature in

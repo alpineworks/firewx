@@ -5,6 +5,9 @@ import firewx "github.com/alpineworks/firewx"
 // Nesterov is the Nesterov ignition index. It is a cumulative measure of
 // dryness. It adds a daily term of temperature and dryness across a run of days
 // without significant rain. One wet day empties the total.
+//
+// Reference: Nesterov, V.G. 1949. The modern description, including the 3 mm
+// reset, is in Groisman et al. 2007, Global and Planetary Change 56(3-4).
 type Nesterov float64
 
 // Class gives the danger category from the Nesterov regimes. Below 300 is regime

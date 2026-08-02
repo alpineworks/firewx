@@ -12,9 +12,10 @@ import firewx "github.com/alpineworks/firewx"
 // deficit and the surface wind. This is the practical approximation when you
 // have only station observations.
 //
-// This package uses the vapour pressure deficit in hectopascals. This agrees
-// with Srock et al. 2018 and the USDA HDW product. The firebehavioR R package
-// uses kilopascals, and its value is 10 times smaller.
+// Reference: Srock et al. 2018, Atmosphere 9(7):279. This package uses the
+// vapour pressure deficit in hectopascals, which agrees with Srock et al. 2018
+// and the USDA HDW product. The firebehavioR R package uses kilopascals, and its
+// value is 10 times smaller.
 type HDW float64
 
 // HDWIndex calculates the surface Hot-Dry-Windy index. The inputs are a vapour
