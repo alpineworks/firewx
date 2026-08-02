@@ -12,15 +12,16 @@ implementations are C++ (`firelab/NFDRS4`), R (`cffdrs/cffdrs_r`) and Python
 
 ## Status
 
-Pre-release. Everything is v0.x and the API will change.
+The root module is released at v1.0.0. It carries the shared types and the
+`simple` indices. The `fwi`, `nfdrs`, and `fetch` modules are stubs.
 
 | Module | Import path | Status |
 | --- | --- | --- |
-| root | `alpineworks.io/firewx` | Types and units |
-| `simple` | `alpineworks.io/firewx/simple` | Not started |
-| `fwi` | `alpineworks.io/firewx/fwi` | Not started |
-| `nfdrs` | `alpineworks.io/firewx/nfdrs` | Not started |
-| `fetch` | `alpineworks.io/firewx/fetch` | Not started |
+| root | `alpineworks.io/firewx` | Released v1.0.0: types, units, and `simple` |
+| `simple` | `alpineworks.io/firewx/simple` | Implemented (a package in root) |
+| `fwi` | `alpineworks.io/firewx/fwi` | Stub |
+| `nfdrs` | `alpineworks.io/firewx/nfdrs` | Stub |
+| `fetch` | `alpineworks.io/firewx/fetch` | Stub |
 
 ## Layout
 

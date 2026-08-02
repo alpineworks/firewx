@@ -51,7 +51,9 @@ option sets one field. Do not add a constructor that takes a long parameter
 list or a config struct. A caller must be able to construct a client with no
 options and get sensible defaults.
 
-**Everything stays v0.x until NFDRS is complete.**
+**Semantic versioning from v1.0.0.** The modules are released at v1.0.0. A
+change that breaks the public API of a module needs a new major version. Design
+the public surface with care, because a major bump is expensive for consumers.
 
 **All documentation is ASD-STE100 Simplified Technical English.** See the
 Documentation language section. This applies to every word we write for a
@@ -90,13 +92,12 @@ not copy its style. New documentation must follow the rules above.
 
 ## Bootstrap constraint
 
-Submodules currently have **no `require` on the root module**, deliberately. A
-submodule cannot build outside the workspace until the root has a published
-tag, so the isolated CI job fails on an unresolvable version if the require is
-added early.
+The root module is now tagged at v1.0.0. Before this tag, the submodules had
+**no `require` on the root module**, because the isolated CI job could not
+resolve an unpublished version.
 
-Add the requires only after root `v0.1.0` is tagged, and only to modules that
-genuinely import the root.
+A submodule that imports the root now adds `require alpineworks.io/firewx
+v1.0.0`. Add the require only to a module that imports the root.
 
 ## Working conventions
 
