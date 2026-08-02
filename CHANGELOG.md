@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/alpineworks/firewx/compare/v1.0.0...v1.0.1) (2026-08-02)
+
+
+### Documentation
+
+* reflect the v1.0.0 release ([4664ef8](https://github.com/alpineworks/firewx/commit/4664ef8764403dcef61395affb13ad38556cf5f8))
+
 ## 1.0.0 (2026-08-02)
 
 
