@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/alpineworks/firewx/compare/nfdrs/v0.2.0...nfdrs/v0.3.0) (2026-08-02)
+
+
+### Features
+
+* **nfdrs:** add the assembly driver ([6f58120](https://github.com/alpineworks/firewx/commit/6f58120421a57ef4f2d2c86728266c48cf4a5374))
+* **nfdrs:** add the fire danger index equations ([cb03b62](https://github.com/alpineworks/firewx/commit/cb03b6206e6434f1c2b1af609d35e472e0789c75))
+* **nfdrs:** NFDRS assembly — index equations and driver ([8547431](https://github.com/alpineworks/firewx/commit/85474312a452cec188b5305a9d2169f676c4c432))
+
 ## [0.2.0](https://github.com/alpineworks/firewx/compare/nfdrs/v0.1.0...nfdrs/v0.2.0) (2026-08-02)
 
 
