@@ -16,11 +16,11 @@ Pre-release. Everything is v0.x and the API will change.
 
 | Module | Import path | Status |
 | --- | --- | --- |
-| root | `github.com/USERNAME/firewx` | Types and units |
-| `simple` | `github.com/USERNAME/firewx/simple` | Not started |
-| `fwi` | `github.com/USERNAME/firewx/fwi` | Not started |
-| `nfdrs` | `github.com/USERNAME/firewx/nfdrs` | Not started |
-| `fetch` | `github.com/USERNAME/firewx/fetch` | Not started |
+| root | `github.com/alpineworks/firewx` | Types and units |
+| `simple` | `github.com/alpineworks/firewx/simple` | Not started |
+| `fwi` | `github.com/alpineworks/firewx/fwi` | Not started |
+| `nfdrs` | `github.com/alpineworks/firewx/nfdrs` | Not started |
+| `fetch` | `github.com/alpineworks/firewx/fetch` | Not started |
 
 ## Layout
 
@@ -31,16 +31,16 @@ transitive dependencies.
 ```
 firewx/
 ├── go.work
-├── go.mod                      github.com/USERNAME/firewx
+├── go.mod                      github.com/alpineworks/firewx
 ├── units.go obs.go opt.go wind.go
 ├── simple/                     package, not a module
-├── fwi/     go.mod             github.com/USERNAME/firewx/fwi
-├── nfdrs/   go.mod             github.com/USERNAME/firewx/nfdrs
+├── fwi/     go.mod             github.com/alpineworks/firewx/fwi
+├── nfdrs/   go.mod             github.com/alpineworks/firewx/nfdrs
 │   ├── nelson/                 dead fuel moisture solver
 │   ├── rothermel/              spread model and size-class weighting
 │   ├── gsi/                    growing season index
 │   └── fuelmodel/              parameter tables
-└── fetch/   go.mod             github.com/USERNAME/firewx/fetch
+└── fetch/   go.mod             github.com/alpineworks/firewx/fetch
     ├── fems/
     ├── synoptic/
     └── wrcc/
