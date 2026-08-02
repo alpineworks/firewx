@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Test the declared minimum and the current stable toolchain.
+        go: ["1.22.x", "stable"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "These files are not gofmt-clean:" >&2
+            echo "$unformatted" >&2
+            exit 1
+          fi
+
+      - name: go vet (workspace)
+        run: go vet ./...
+
+      - name: go test (workspace)
+        run: go test -race ./...
+
+      # The workspace masks missing require directives. This isolated run is
+      # what a downstream consumer actually gets from the module proxy, and is
+      # the one that must pass before a tag is cut.
+      - name: go test (isolated, per module)
+        run: |
+          set -euo pipefail
+          for m in . fwi nfdrs fetch; do
+            echo "::group::module $m (GOWORK=off)"
+            (cd "$m" && GOWORK=off go test ./...)
+            echo "::endgroup::"
+          done
