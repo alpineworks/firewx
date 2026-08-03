@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/alpineworks/firewx/compare/fetch/v0.2.0...fetch/v0.2.1) (2026-08-03)
+
+
+### Dependencies
+
+* bump alpineworks.io/firewx to v1.2.0 in the submodules ([f522f3e](https://github.com/alpineworks/firewx/commit/f522f3e220f50efa6327b5cb4b99897409c2620b))
+
 ## [0.2.0](https://github.com/alpineworks/firewx/compare/fetch/v0.1.0...fetch/v0.2.0) (2026-08-02)
 
 
