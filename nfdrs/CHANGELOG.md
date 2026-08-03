@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/alpineworks/firewx/compare/nfdrs/v0.3.0...nfdrs/v0.4.0) (2026-08-03)
+
+
+### Features
+
+* **nfdrs:** add Driver state persistence ([55c388c](https://github.com/alpineworks/firewx/commit/55c388cf5996e25006937f8d370329f47930f6d8))
+* **nfdrs:** add Driver state persistence ([4090360](https://github.com/alpineworks/firewx/commit/4090360cc45ba65c78e90dbf897ae86f20efb472))
+
 ## [0.3.0](https://github.com/alpineworks/firewx/compare/nfdrs/v0.2.0...nfdrs/v0.3.0) (2026-08-02)
 
 
