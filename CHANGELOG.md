@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/alpineworks/firewx/compare/v1.2.0...v1.2.1) (2026-08-03)
+
+
+### Dependencies
+
+* bump alpineworks.io/firewx to v1.2.0 in the submodules ([f522f3e](https://github.com/alpineworks/firewx/commit/f522f3e220f50efa6327b5cb4b99897409c2620b))
+
 ## [1.2.0](https://github.com/alpineworks/firewx/compare/v1.1.0...v1.2.0) (2026-08-03)
 
 
