@@ -20,16 +20,16 @@ const (
 type Indices struct {
 	// SpreadComponent is the forward rate of spread of the head fire, related
 	// to feet per minute.
-	SpreadComponent float64
+	SpreadComponent float64 `json:"spread_component"`
 	// EnergyReleaseComponent is the energy release per unit area of the flaming
 	// front.
-	EnergyReleaseComponent float64
+	EnergyReleaseComponent float64 `json:"energy_release_component"`
 	// BurningIndex combines the spread component and the energy release
 	// component.
-	BurningIndex float64
+	BurningIndex float64 `json:"burning_index"`
 	// IgnitionComponent is the chance that a firebrand starts a fire, from 0 to
 	// 100.
-	IgnitionComponent float64
+	IgnitionComponent float64 `json:"ignition_component"`
 }
 
 // Conditions holds the fuel moisture and the weather for an index computation.
