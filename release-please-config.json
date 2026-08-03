@@ -9,7 +9,8 @@
       "release-type": "go",
       "package-name": "firewx",
       "include-component-in-tag": false,
-      "changelog-path": "CHANGELOG.md"
+      "changelog-path": "CHANGELOG.md",
+      "exclude-paths": ["fwi", "nfdrs", "fetch"]
     },
     "fwi": {
       "release-type": "go",
